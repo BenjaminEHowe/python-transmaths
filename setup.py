@@ -7,8 +7,8 @@ from setuptools import setup
 setup(
     name="transmaths",
     version="0.1.dev1",
-    description="A Python project which makes division by zero possible.",
-    long_description="A Python project which makes division by zero possible.",
+    description="A Python module which makes division by zero possible.",
+    long_description="A Python module which makes division by zero possible.",
     url="https://github.com/BenjaminEHowe/python-transmaths",
     author="Benjamin Howe",
     author_email="ben@bh96.uk",
