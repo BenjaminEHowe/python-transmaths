@@ -425,6 +425,9 @@ class Transreal:
 
     def root(self, power):
         """Returns the power-th root of self using Newton's method."""
+        # if the power isn't transreal, try to make it transreal
+        power = Transreal(power)
+
         if self < 0:
             # cheat as we haven't implemented transcomplex numbers
             return NULLITY

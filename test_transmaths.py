@@ -12,6 +12,10 @@ class TestTransreal(unittest.TestCase):
         with self.assertRaises(TypeError):
             Transreal(1) + "one"
 
+    def test_add_nullity(self):
+        """nullity + x = nullity."""
+        self.assertEqual(transmaths.NULLITY + 1, transmaths.NULLITY)
+
     def test_eq_exception(self):
         """Transreal numbers are not equal to strings."""
         self.assertNotEqual(Transreal(2), "two")
@@ -77,6 +81,10 @@ class TestTransreal(unittest.TestCase):
         t = Transreal(1, -2)
         self.assertEqual(t.numerator, -1)
         self.assertEqual(t.denominator, 2)
+
+    def test_init_infinity_precision(self):
+        """Initalise transreal infinity from a transreal number and an imprecice number."""
+        self.assertFalse(Transreal(Transreal(2).root(2), 0).approximate)
 
     def test_init_transreal_int(self):
         """Initialise a transreal number from a transreal numerator and a int denominator."""
@@ -222,6 +230,46 @@ class TestTransreal(unittest.TestCase):
     def test_root_exact(self):
         """The cube root of 64 is exactly 4 (not 3.9999999999999996)."""
         self.assertEqual(Transreal(64).root(3), 4)
+
+    def test_root_infinity(self):
+        """The square root of infinity is infinity."""
+        self.assertEqual(transmaths.INFINITY.root(2), transmaths.INFINITY)
+
+    def test_root_infinity_infinity(self):
+        """The infinite root of infinity is nullity."""
+        self.assertEqual(transmaths.INFINITY.root(transmaths.INFINITY), transmaths.NULLITY)
+
+    def test_root_infinity_real(self):
+        """The infinite root of a real number is 0."""
+        self.assertEqual(Transreal(1).root(transmaths.INFINITY), 0)
+
+    def test_root_negative(self):
+        """The square root of -1 should be a complex number, but for now is nullity."""
+        self.assertEqual(Transreal(-1).root(2), transmaths.NULLITY)
+
+    def test_root_negative_infinity(self):
+        """The negative second root of infinity is -infinity."""
+        self.assertEqual(transmaths.INFINITY.root(-2), -transmaths.INFINITY)
+
+    def test_root_nullity(self):
+        """The square root of nullity is nullity."""
+        self.assertEqual(transmaths.NULLITY.root(2), transmaths.NULLITY)
+
+    def test_sign_negative(self):
+        """Test the sign function for negative numbers."""
+        self.assertEqual(Transreal(-1).sign(), -1)
+
+    def test_sign_nullity(self):
+        """Test the sign function for nullity."""
+        self.assertEqual(transmaths.NULLITY.sign(), transmaths.NULLITY)
+
+    def test_sign_positive(self):
+        """Test the sign function for positive numbers."""
+        self.assertEqual(Transreal(1).sign(), 1)
+
+    def test_sign_zero(self):
+        """Test the sign function for zero."""
+        self.assertEqual(Transreal(0).sign(), 0)
 
     def test_str_approx(self):
         """Approximate transreal numbers are prefixed by a tilde."""
