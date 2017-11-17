@@ -8,7 +8,7 @@ _Please note: it is a known bug that (-1).root(2) returns nullity, instead of a 
 
 ### From PyPI
 
-Coming soon...
+`pip3 install transmaths`
 
 ### From GitHub
 
