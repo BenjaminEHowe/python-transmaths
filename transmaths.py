@@ -17,7 +17,10 @@ class Transreal:
                 result = numerator / denominator
                 self.numerator = result.numerator
                 self.denominator = result.denominator
-                self.approximate = result.approximate
+                if abs(result) == INFINITY or result == NULLITY:
+                    self.approximate = False
+                else:
+                    self.approximate = result.approximate
             return
 
         # check numerator and denominator are integers
@@ -27,7 +30,7 @@ class Transreal:
             if isinstance(numerator, float):
                 try:
                     self.numerator, self.denominator = (numerator).as_integer_ratio()
-                    self.approximate = True
+                    self.approximate = False
                 except OverflowError:
                     # this means that the numerator is + or - infinity
                     if numerator == float("inf"):
@@ -58,7 +61,11 @@ class Transreal:
         # set the values
         self.numerator = numerator
         self.denominator = denominator
-        self.approximate = approximate
+        if denominator == 0:
+            self.approximate = False
+        else:
+            self.approximate = approximate
+
         return
 
 
@@ -75,6 +82,10 @@ class Transreal:
             other = Transreal(other)
         except TypeError:
             return NotImplemented
+
+        # nullity + x or x + nullity always equals nullity (axiom 4)
+        if self == NULLITY or other == NULLITY:
+            return NULLITY
 
         # if the denominators are the same, add the fractions simply
         if self.denominator == other.denominator:
@@ -414,6 +425,24 @@ class Transreal:
 
     def root(self, power):
         """Returns the power-th root of self using Newton's method."""
+        if self < 0:
+            # cheat as we haven't implemented transcomplex numbers
+            return NULLITY
+
+        if self == NULLITY or power == NULLITY:
+            return NULLITY
+
+        if self == INFINITY:
+            if abs(power) == INFINITY:
+                return NULLITY
+            elif power < 0:
+                return -INFINITY
+            else:
+                return INFINITY
+
+        if abs(power) == INFINITY:
+            return 0
+
         PRECISION = 9 # accurate to 1 billionth
 
         # source: http://mathforum.org/library/drmath/view/52628.html
@@ -437,6 +466,18 @@ class Transreal:
         """Returns self rounded to the specified number of decimal places."""
         rounded = (self * 10**(decimal_places)).floor() / 10**(decimal_places)
         return rounded
+
+
+    def sign(self):
+        """Returns the sign of self."""
+        if self > 0:
+            return Transreal(1)
+        elif self == 0:
+            return Transreal(0)
+        elif self < 0:
+            return Transreal(-1)
+        else:
+            return NULLITY
 
 
 
