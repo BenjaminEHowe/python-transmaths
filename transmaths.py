@@ -226,10 +226,14 @@ class Transreal:
         except TypeError:
             return NotImplemented
 
-        return Transreal(
-            self.numerator * other.numerator,
-            self.denominator * other.denominator,
-            self.approximate or other.approximate)
+        if self == 0 or other == 0:
+            return Transreal(self.numerator * other.numerator, self.denominator * other.denominator)
+        else:
+            return Transreal(
+                self.numerator * other.numerator,
+                self.denominator * other.denominator,
+                self.approximate or other.approximate
+            )
 
 
     def __ne__(self, other):
@@ -430,8 +434,8 @@ class Transreal:
         power = Transreal(power)
 
         if self < 0:
-            # cheat as we haven't implemented transcomplex numbers
-            return NULLITY
+            # if self is less than 0, the answer is complex
+            return Transcomplex((self * -1).root(power), PI / 2)
 
         if self == NULLITY or power == NULLITY:
             return NULLITY
@@ -482,9 +486,6 @@ class Transreal:
             return Transreal(-1)
         else:
             return NULLITY
-
-
-
 
 
 
@@ -681,6 +682,8 @@ class Transcomplex:
 
     def _find_bisector(self, other):
         """Utility function for finding the unique bisector of two angles with magnitude infinity. """
+
+
 
 
 INFINITY = Transreal(1, 0)
