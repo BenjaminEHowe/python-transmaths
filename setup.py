@@ -2,7 +2,7 @@
 Based on the example at https://github.com/pypa/sampleproject/blob/master/setup.py
 """
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name="transmaths",
@@ -22,6 +22,5 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     keywords="transmathematics transcomputation nullity zero",
-    #py_modules=["transmaths","transcomplex"],
-    packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    py_modules=["transmaths"],
 )
