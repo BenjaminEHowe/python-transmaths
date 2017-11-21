@@ -664,6 +664,17 @@ class Transcomplex:
 
         return "({}, {})".format(self.magnitude, self.angle)
 
+    
+    def __eq__(self, other):
+        # if other isn't transcomplex, try to make it transcomplex
+        try:
+            other = Transcomplex(other)
+        except TypeError:
+            return NotImplemented
+
+        return self.magnitude == other.magnitude and self.angle == other.angle
+
+
     def polar(self):
         """return the polar form of the transcomplex number (r, t)"""
 

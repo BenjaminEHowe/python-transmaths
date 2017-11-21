@@ -3,6 +3,7 @@ import unittest
 import transmaths
 
 Transreal = transmaths.Transreal
+Transcomplex = transmaths.Transcomplex
 
 class TestTransreal(unittest.TestCase):
     """Tests the Transreal object."""
@@ -245,7 +246,7 @@ class TestTransreal(unittest.TestCase):
 
     def test_root_negative(self):
         """The square root of -1 should be a complex number, but for now is nullity."""
-        self.assertEqual(Transreal(-1).root(2), transmaths.NULLITY)
+        self.assertEqual(Transreal(-1).root(2), Transcomplex(1, transmaths.PI / 2))
 
     def test_root_negative_infinity(self):
         """The negative second root of infinity is -infinity."""
