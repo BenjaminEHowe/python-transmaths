@@ -2,8 +2,6 @@
 
 A Python module which makes division by zero possible.
 
-_Please note: it is a known bug that (-1).root(2) returns nullity, instead of a transcomplex number. This is because transcomplex numbers have not yet been implemented in this module._
-
 ## Installation
 
 ### From PyPI
