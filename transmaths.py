@@ -3,6 +3,9 @@ from math import gcd
 import cmath
 
 # see https://docs.python.org/3/reference/datamodel.html#emulating-numeric-types
+import math
+
+
 class Transreal:
     """A transreal number."""
 
@@ -119,6 +122,12 @@ class Transreal:
 
 
     def __float__(self):
+        # returning float of 1/0 (naturally!) results in a division by zero exception. workaround is to return
+        # float('inf') in this case - this is fine, as float('inf') can be cast back to transmaths.INFINITY just fine.
+        if self == INFINITY:
+            return float('inf')
+        if self == -INFINITY:
+            return float('-inf')
         return self.numerator / self.denominator
 
 
@@ -654,7 +663,66 @@ class Transcomplex:
                 return Transcomplex(NULLITY, 0)
 
             # if we've reached this point, we have two, non-opposite infinities - we have to find their unique bisector
+            # bisector of t1 t2
+            bisector = (self.angle + other.angle)/2
 
+            # return the transcomplex number (inf, bisector)
+            if self.magnitude.sign() > 0 and other.magnitude.sign() > 0:
+                return Transcomplex(INFINITY, bisector)
+            elif self.magnitude.sign() < 0 and other.magnitude.sign() < 0:
+                return Transcomplex(-INFINITY, bisector)
+            else:
+                raise Exception()  # we should not get here!
+
+        if abs(self.magnitude) == INFINITY and abs(other.magnitude) != INFINITY:
+            # in this case, we're adding a finite transcomplex number to an infinite transcomplex number. the result of
+            # such a sum is always the transcomplex infinite number
+            return self
+
+        # likewise if self is finite and other is infinite,
+        if abs(self.magnitude) != INFINITY and abs(other.magnitude) == INFINITY:
+            return other
+
+        # if arriving at this point, we have a finite transcomplex number. By converting these to their cartesian
+        # counterpart, we can add them easily. this works because cos t and sin t are total functions, and the use of
+        # nullity above allows us to use the below functions regardless of input.
+
+        # convert polar transcomplex numbers to their cartesian form using 'cmath'
+        cartesian_self = cmath.rect(self.magnitude, self.angle)
+        cartesian_other = cmath.rect(other.magnitude, other.angle)
+
+        # add the cartesian transcomplex numbers together
+        cartesian_ans = cartesian_self+cartesian_other
+
+        # and convert back to polar form
+
+        ans = cmath.polar(cartesian_ans)
+
+        # finally, return a transcomplex number. Using the built-in cmath functions ONLY work becuase of the additional
+        # axioms introduced by transcomplex arithmetic - in a real perspex system, division by zero would actually be
+        # possible in hardware; so the above would not strictly be necessary. As division by zero is impossible on
+        # von neumann systems in any modern programming language, we have to emulate it as above by applying the rules
+        # of transcomplex arithmetic manually.
+
+        return Transcomplex(ans[0],ans[1])
+
+    def __sub__(self, other):
+        # subtraction of a transcomplex number is addition of its opposite transvector
+        other_cart = cmath.rect(other.magnitude, other.angle)
+        other_polar = cmath.polar(other_cart)
+        negative_angle = other_polar[1] - math.pi
+        negative_other = Transcomplex(other_polar[0], negative_angle)
+
+        return self+negative_other
+
+
+    def __float__(self):
+        raise TypeError("Cannot convert Transcomplex number to float.")
+
+    def to_floats(self):
+        """Make transcomplex numbers more readable by converting fractional parts to floats"""
+        self.magnitude = float(self.magnitude)
+        self.angle = float(self.angle)
 
 
     def __repr__(self):
@@ -691,8 +759,7 @@ class Transcomplex:
         else:
             return False
 
-    def _find_bisector(self, other):
-        """Utility function for finding the unique bisector of two angles with magnitude infinity. """
+
 
 
 
